@@ -1,0 +1,33 @@
+# Unreal generated folders
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+
+# Visual Studio / Rider
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+.idea/
+
+# Build outputs and packages
+Builds/
+PackagedBuilds/
+Releases/
+*.zip
+*.7z
+*.rar
+
+# Local secrets and machine-specific config
+.env
+.env.*
+Config/DefaultGame.local.ini
+
+# Logs and crash dumps
+*.log
+*.dmp
+*.tmp
