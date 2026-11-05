@@ -149,7 +149,7 @@ describe('Unreal static structural checks', () => {
   });
 
   it('keeps ApiKey empty and never echoes a committed key', () => {
-    const secret = 'sk-test-0123456789';
+    const secret = 'FAKE-TEST-VALUE-NOT-A-KEY';
     withTempProject({ gameIni: GAME_INI_WITH_RULE.replace('ApiKey=', `ApiKey=${secret}`) }, (dir) => {
       const result = verifyStructure(dir);
       assert.equal(result.valid, false);
