@@ -1,9 +1,26 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Turbo cache
+.turbo/
+
+# Expo / React Native
+.expo/
+dist/
+web-build/
+ios/
+android/
+expo-env.d.ts
+.metro-health-check*
+
 # Unreal generated folders
 Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
 .vs/
+.idea/
 
 # Visual Studio / Rider
 *.sln
@@ -12,7 +29,6 @@ Saved/
 *.sdf
 *.VC.db
 *.VC.opendb
-.idea/
 
 # Build outputs and packages
 Builds/
@@ -22,12 +38,27 @@ Releases/
 *.7z
 *.rar
 
-# Local secrets and machine-specific config
+# Local secrets, credentials, certificates, and machine-specific config
 .env
 .env.*
+!.env.example
+app.local.config.json
+credentials.json
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+**/DefaultGame.local.ini
 Config/DefaultGame.local.ini
+apps/unreal/Config/DefaultGame.local.ini
 
 # Logs and crash dumps
 *.log
 *.dmp
 *.tmp
+npm-debug.*
+
+# OS files
+.DS_Store
+Thumbs.db

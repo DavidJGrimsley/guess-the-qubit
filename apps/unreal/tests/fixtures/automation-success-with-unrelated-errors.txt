@@ -1,0 +1,10 @@
+# Real UnrealEditor-Cmd 5.8 output (Win64, nullrhi) for: Automation RunTests QuantumApi.Runtime.Transport. Captured before the GameFeatureData Asset Manager rule existed, so the unrelated LogGameFeatures/LoadErrors Error lines are present while the test passes. Selected lines only; paths sanitized.
+[2026.11.05-19.15.32:057][  0]LogGameFeatures: Error: Asset manager settings do not include a rule for assets of type GameFeatureData, which is required for game feature plugins to function
+[2026.11.05-19.15.32:059][  0]LoadErrors: Error: Asset Manager settings do not include an entry for assets of type GameFeatureData, which is required for game feature plugins to function. Add entry to PrimaryAssetTypesToScan?
+[2026.11.05-19.15.37:038][  2]LogAutomationCommandLine: Display: Ready to start automation
+[2026.11.05-19.15.42:584][302]LogAutomationCommandLine: Display: Found 1 automation tests based on 'QuantumApi.Runtime.Transport'
+[2026.11.05-19.15.42:584][302]LogAutomationCommandLine: Display: 	QuantumApi.Runtime.Transport
+[2026.11.05-19.15.42:642][303]LogAutomationController: Display: Test Started. Name={Transport} Path={QuantumApi.Runtime.Transport}
+[2026.11.05-19.15.42:677][305]LogAutomationController: Display: Test Completed. Result={Success} Name={Transport} Path={QuantumApi.Runtime.Transport}
+[2026.11.05-19.15.42:678][305]LogAutomationController: Display: Exporting Automation Report.
+[2026.11.05-19.15.42:694][306]LogAutomationCommandLine: Display: **** TEST COMPLETE. EXIT CODE: 0 ****

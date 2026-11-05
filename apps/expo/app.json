@@ -1,0 +1,90 @@
+{
+  "expo": {
+    "name": "Guess the Qubit",
+    "slug": "guess-the-qubit-ar",
+    "version": "1.0.0",
+    "scheme": "guess-the-qubit-ar",
+    "platforms": ["ios", "android"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/splash.png",
+          "dark": {
+            "image": "./assets/images/splash-icon-dark.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 200
+        }
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "style": "dark",
+          "enforceContrast": false
+        }
+      ],
+      "expo-system-ui",
+      [
+        "@reactvision/react-viro",
+        {
+          "android": {
+            "xRMode": ["AR"]
+          },
+          "ios": {
+            "cameraUsagePermission": "Guess the Qubit uses the camera to place its AR experience in your surroundings."
+          },
+          "provider": "none"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true,
+      "tsconfigPaths": true
+    },
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "requireFullScreen": true,
+      "bundleIdentifier": "com.djleg.guessthequbitar",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos",
+        "NSCameraUsageDescription": "Guess the Qubit uses the camera to place its AR experience in your surroundings.",
+        "NSMicrophoneUsageDescription": "Allow Guess the Qubit to include microphone audio when recording an AR experience.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "backgroundColor": "#f1f0f8",
+      "package": "com.djleg.guessthequbitar"
+    },
+    "backgroundColor": "#f1f0f8",
+    "androidStatusBar": {
+      "backgroundColor": "#f1f0f8",
+      "barStyle": "dark-content",
+      "translucent": false
+    },
+    "extra": {
+      "router": {},
+      "expo-navigation-bar": {
+        "enforceContrast": false,
+        "style": "dark"
+      }
+    },
+    "owner": "mrdj2u",
+    "web": {
+      "output": "static"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "guess-the-qubit",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.0.8",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "turbo run format",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "ci:verify": "turbo run ci:verify",
+    "expo:lint": "pnpm --filter guess-the-qubit-ar lint",
+    "expo:typecheck": "pnpm --filter guess-the-qubit-ar typecheck",
+    "expo:test": "pnpm --filter guess-the-qubit-ar test",
+    "expo:build:ios": "pnpm --filter guess-the-qubit-ar build:ios",
+    "expo:build:android": "pnpm --filter guess-the-qubit-ar build:android",
+    "verify:eas-ignore": "node scripts/verify-eas-ignore.cjs",
+    "unreal:check": "pnpm --filter @guess-the-qubit/unreal check",
+    "unreal:test": "pnpm --filter @guess-the-qubit/unreal test",
+    "unreal:check:host": "pnpm --filter @guess-the-qubit/unreal check:host",
+    "unreal:matrix": "pnpm --filter @guess-the-qubit/unreal matrix",
+    "unreal:test:automation": "pnpm --filter @guess-the-qubit/unreal test:automation"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.10"
+  }
+}

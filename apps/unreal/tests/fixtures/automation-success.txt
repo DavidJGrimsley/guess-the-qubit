@@ -1,0 +1,7 @@
+# Real UnrealEditor-Cmd 5.8 output (Win64, nullrhi) for: Automation RunTests QuantumApi.Runtime.Transport, captured after the GameFeatureData Asset Manager rule was added (no Error lines). Selected lines only; paths sanitized. Editor exit code 0.
+[2026.11.05-19.29.46:980][303]LogAutomationCommandLine: Display: Found 1 automation tests based on 'QuantumApi.Runtime.Transport'
+[2026.11.05-19.29.46:980][303]LogAutomationCommandLine: Display: 	QuantumApi.Runtime.Transport
+[2026.11.05-19.29.46:983][303]LogAutomationController: Display: Clearing <PROJECT_ROOT>/Saved/Automation/Logs/ and <PROJECT_ROOT>/Saved/Automation/Tmp/
+[2026.11.05-19.29.46:985][304]LogAutomationController: Display: Test Started. Name={Transport} Path={QuantumApi.Runtime.Transport}
+[2026.11.05-19.29.47:003][305]LogAutomationController: Display: Test Completed. Result={Success} Name={Transport} Path={QuantumApi.Runtime.Transport}
+[2026.11.05-19.29.47:020][306]LogAutomationCommandLine: Display: **** TEST COMPLETE. EXIT CODE: 0 ****

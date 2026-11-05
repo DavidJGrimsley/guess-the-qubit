@@ -1,0 +1,43 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+          cache: pnpm
+      - name: Install dependencies (frozen)
+        run: pnpm install --frozen-lockfile
+      # Linux paths are case-sensitive, so these also guard Plugins/QuantumAPI capitalization.
+      # None of this compiles, cooks, or runs Unreal Engine: native Unreal validation needs an installed UE 5.8 on
+      # Windows, macOS, or Linux and is intentionally not part of hosted CI. `unreal:check:host` is host-dependent and
+      # is not run here; no native or host-specific Unreal results are cached.
+      - name: Unreal static structure and release matrix
+        run: |
+          pnpm run unreal:check
+          pnpm run unreal:matrix
+      - name: Unreal orchestration script tests
+        run: pnpm run unreal:test
+      - name: EAS ignore simulation
+        run: pnpm run verify:eas-ignore
+      - name: Run Expo lint, typecheck, and tests
+        run: |
+          pnpm run expo:lint
+          pnpm run expo:typecheck
+          pnpm run expo:test
+      - name: Run serial iOS and Android exports
+        run: |
+          pnpm run expo:build:ios
+          pnpm run expo:build:android
