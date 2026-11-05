@@ -18,7 +18,9 @@
     "expo:test": "pnpm --filter guess-the-qubit-ar test",
     "expo:build:ios": "pnpm --filter guess-the-qubit-ar build:ios",
     "expo:build:android": "pnpm --filter guess-the-qubit-ar build:android",
+    "verify:eas-ignore": "node scripts/verify-eas-ignore.cjs",
     "unreal:check": "pnpm --filter @guess-the-qubit/unreal check",
+    "unreal:test": "pnpm --filter @guess-the-qubit/unreal test",
     "unreal:check:host": "pnpm --filter @guess-the-qubit/unreal check:host",
     "unreal:matrix": "pnpm --filter @guess-the-qubit/unreal matrix",
     "unreal:test:automation": "pnpm --filter @guess-the-qubit/unreal test:automation"

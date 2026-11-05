@@ -19,7 +19,7 @@ Or from `apps/expo`:
 pnpm start
 ```
 
-Copy `.env.example` to ignored `.env` and supply your existing Quantum API demo configuration. The private demo architecture bundles `EXPO_PUBLIC_*` values in the binary; use a server proxy before public binary distribution. No credentials are included. The desktop/VR Unreal game lives alongside this app under `apps/unreal/`.
+Copy `.env.example` to ignored `.env` and supply your existing Quantum API demo configuration. The private demo architecture bundles `EXPO_PUBLIC_*` values in the binary; use a server proxy before public binary distribution. No credentials are included. The Unreal Engine desktop game lives alongside this app under `apps/unreal/`.
 
 ## Validation
 
