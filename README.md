@@ -1,53 +1,86 @@
-# Guess the Qubit
+# Guess the Qubit Monorepo
 
-Guess the Qubit is an Unreal Engine 5.8 educational game and starter project for learning the basics of qubits, measurement, and quantum gates through a playable Bloch sphere experience.
+Unified monorepo for the **Guess the Qubit** interactive quantum educational applications, containing both the mobile AR application and the Unreal Engine desktop application.
 
-The current prototype uses the Quantum API Unreal plugin to run a simple rotation gate, animate the qubit state, and ask the player to predict the measurement result. The goal is to grow this into a friendly interactive lesson path that starts with intuition and gradually introduces real quantum computing concepts.
+## Repository Structure
 
-## Goals
+```
+guess-the-qubit/
+├── apps/
+│   ├── expo/      # Expo SDK 57 mobile application (iOS, Android)
+│   └── unreal/    # Unreal Engine 5.8 interactive application (Windows, Mac, Linux)
+├── patches/       # Committed pnpm dependency patches
+├── package.json   # Monorepo root package descriptor (pnpm 11.0.8 & Turbo)
+├── pnpm-workspace.yaml # Workspace definitions, overrides, and patch registrations
+├── turbo.json     # Turborepo task pipeline configuration
+└── .easignore     # Root EAS ignore ensuring Unreal assets are excluded from mobile builds
+```
 
-- Teach what a qubit is without starting from dense math.
-- Show the Bloch sphere as a playable object, not just a static diagram.
-- Let players experiment with gates, measurement, superposition, and hardware-backed jobs.
-- Provide a clean Unreal starter project for developers using the Quantum API plugin.
+## Applications & Supported Release Policy
 
-## Current Status
+### `apps/expo` (Mobile AR Application)
+- **Framework**: Expo SDK 57, React Native 0.86, React 19, React Viro AR.
+- **Naming**: Named `expo` under `apps/` to allow future platforms while maintaining platform neutrality.
+- **Release Targets**: **iOS** and **Android** are the supported release platforms.
+- **Web Policy**: Expo web dependencies (`react-native-web`) are preserved for developer tooling and compatibility; future web support is not claimed or released under current release policy.
+- **Identifier**: `com.djleg.guessthequbitar`, scheme `guess-the-qubit-ar`.
 
-This repo is an early playable prototype. It currently includes:
+### `apps/unreal` (Unreal Engine 5.8 Application)
+- **Engine**: Unreal Engine 5.8.
+- **Release Targets**: **Windows (`Win64`)**, **macOS (`Mac`)**, and **Linux (`Linux`)** form the supported release matrix under release policy.
+- **Packaging Policy**: Supported release policy rather than a packaging ban. Native builds require matching platform toolchains and an installed Unreal Engine 5.8 editor/UAT.
+- **Orchestration**: Represented by `@guess-the-qubit/unreal`. JS orchestration scripts verify descriptors, configuration, and host readiness; JS checks do not claim to compile or validate native UE builds.
 
-- A neon Bloch sphere Blueprint actor.
-- A guess-the-measurement game loop.
-- Simulated gate calls through the Quantum API plugin.
-- Early hardware job wiring experiments.
-- Starter visual labels for the standard Bloch basis states: `|0>`, `|1>`, `|+>`, `|->`, `|i>`, and `|-i>`.
+## Dependency Management & Workspace Security
 
-## Setup
+- **Package Manager**: `pnpm@11.0.8`.
+- **Linker**: Hoisted linker (`nodeLinker: hoisted`) configured in `pnpm-workspace.yaml` and `.npmrc` to maintain React Native / Metro module resolution compatibility.
+- **Lifecycle Script Security**: Strict script allowlist (`onlyBuiltDependencies: ['unrs-resolver']`) configured to ensure third-party package lifecycle security.
+- **Committed Decoder Patch**: `patches/decode-uri-component@0.5.0.patch` adapts `decode-uri-component@0.5.0` to support both CommonJS `require()` and ESM `import`, maintaining the reviewed decoding algorithm while eliminating unsafe runtime hardlink mutations.
+- **Scoped Overrides**:
+  - `query-string@7.1.3>decode-uri-component`: `0.5.0`
+  - `xcode`: `3.0.1`
+  - `xcode@3.0.1>uuid`: `11.1.1`
 
-1. Open `GuessTheQubit.uproject` in Unreal Engine 5.8.
-2. Enable or verify the `QuantumAPI` project plugin.
-3. In Project Settings, configure your Quantum API key before running API-backed gameplay.
+## Development & Verification
 
-The committed config intentionally leaves `ApiKey=` blank. Do not commit personal API keys or IBM credentials.
+### Install Dependencies
+```bash
+pnpm install --frozen-lockfile
+```
 
-## Repository Layout
+### Run Checks & Tests
+```bash
+# Run all workspace checks
+pnpm run ci:verify
 
-- `Config/` - Unreal project configuration.
-- `Content/` - Game Blueprints, UI, materials, and assets.
-- `Plugins/QuantumAPI/` - Project-local copy of the Quantum API Unreal plugin.
+# Or run individual checks
+pnpm run lint
+pnpm run typecheck
+pnpm run test
 
-Generated Unreal folders such as `Binaries/`, `DerivedDataCache/`, `Intermediate/`, and `Saved/` are intentionally ignored.
+# Unreal host check & release matrix
+pnpm run unreal:check
+pnpm run unreal:matrix
+```
 
-## Educational Direction
+### Expo Native Exports
+```bash
+# Serial iOS and Android exports
+pnpm run expo:build:ios
+pnpm run expo:build:android
+```
 
-Planned learning beats:
+## EAS Build Invocation & Archive Inspection
 
-- Qubit vs classical bit.
-- The `|0>` and `|1>` basis states.
-- Superposition and the equator states.
-- Measurement randomness.
-- Rotation gates and intuition for `RY(pi/2)`.
-- Difference between simulation and queued hardware jobs.
+Mobile builds via Expo Application Services (EAS) should be invoked from the `apps/expo` directory. Root `.easignore` protects against leaking or uploading `apps/unreal` binaries, assets, maps, and local secrets.
+
+To inspect the build archive locally without making cloud service calls:
+```bash
+cd apps/expo
+npx eas-cli build:inspect -p ios -s archive -o ../../temp/eas-archive-ios --force
+```
 
 ## License
 
-License is pending. Do not assume reuse rights until a license file is added.
+All rights reserved. Specific license terms are pending.
