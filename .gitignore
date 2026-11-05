@@ -49,7 +49,9 @@ credentials.json
 *.p12
 *.key
 *.mobileprovision
+**/DefaultGame.local.ini
 Config/DefaultGame.local.ini
+apps/unreal/Config/DefaultGame.local.ini
 
 # Logs and crash dumps
 *.log

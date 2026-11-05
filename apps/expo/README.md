@@ -1,35 +1,49 @@
-# Guess the Qubit
+# Guess the Qubit (Mobile AR)
 
 Guess quantum measurements with simulator and asynchronous hardware modes in AR.
 
-Standalone app extracted from local source commit `5523f52` on November 4, 2026; see [source details](SOURCE.md). Its published feature baseline is [XR Showcase at `e69ddae`](https://github.com/DavidJGrimsley/xr-showcase/commit/e69ddae38ca6602ca5cd7ca844b9ae75b16767e2). The original repository retains the full development history. This repository begins with an attributed snapshot, includes only this app's feature/assets, and owns its local copy of shared AR/UI code. It has no sibling-repository or workspace dependency. Asset provenance and license files remain with the assets; this extraction does not grant new rights.
+This app is the mobile AR client within the unified [Guess the Qubit](https://github.com/DavidJGrimsley/guess-the-qubit) monorepo, located under `apps/expo/`. Its published feature baseline originated from XR Showcase at `e69ddae` and was unified into the monorepo preserving commit history.
 
 ## Development
 
-Use Node 22.13 or newer, npm, and the pinned lockfile. Expo SDK 57 / React Native 0.86 and Viro require a native development client. Expo Go cannot run this app.
+The monorepo uses Node 22.13 or newer and pnpm 11.0.8 with a pinned root `pnpm-lock.yaml`. Expo SDK 57 / React Native 0.86 and Viro require a native development client. Expo Go cannot run this app.
 
+From the repository root:
 ```sh
-npm ci
-npm start
+pnpm install --frozen-lockfile
+pnpm --filter guess-the-qubit-ar start
 ```
 
-Copy `.env.example` to ignored `.env` and supply your existing Quantum API demo configuration. The private demo architecture bundles `EXPO_PUBLIC_*` values in the binary; use a server proxy before public binary distribution. No credentials are included. The original Unreal game remains in [guess-the-qubit](https://github.com/DavidJGrimsley/guess-the-qubit).
+Or from `apps/expo`:
+```sh
+pnpm start
+```
+
+Copy `.env.example` to ignored `.env` and supply your existing Quantum API demo configuration. The private demo architecture bundles `EXPO_PUBLIC_*` values in the binary; use a server proxy before public binary distribution. No credentials are included. The desktop/VR Unreal game lives alongside this app under `apps/unreal/`.
 
 ## Validation
 
+From the monorepo root:
 ```sh
-npm test
-npm run build:ios
-npm run build:android
+pnpm --filter guess-the-qubit-ar lint
+pnpm --filter guess-the-qubit-ar typecheck
+pnpm --filter guess-the-qubit-ar test
+pnpm --filter guess-the-qubit-ar build:ios
+pnpm --filter guess-the-qubit-ar build:android
 ```
 
-Exports validate JavaScript and assets, not a signed native build. Physical-device AR, camera permissions, lifecycle behavior, and live external services require device testing. Existing upstream dependency advisories and renderer limitations are not resolved by the repository split. Expo compatibility checks currently recommend six newer SDK 57 patch versions, identically in the source app and these snapshots; dependency upgrades are a separate task.
+Or run the full monorepo verification:
+```sh
+pnpm run ci:verify
+```
 
-The URI-decoder postinstall bridge and scoped UUID override preserve the source project's dependency compatibility fixes. Keep install scripts enabled; `tests/dependency-compat.test.cjs` verifies them.
+Exports validate JavaScript and assets, not a signed native build. Physical-device AR, camera permissions, lifecycle behavior, and live external services require device testing.
 
-## Native app identity
+The URI-decoder pnpm patch (`patches/decode-uri-component@0.5.0.patch`) and scoped UUID override preserve dependency compatibility in hoisted workspaces. `apps/expo/tools/compat/prepare-uri-decoder.cjs` performs non-mutating verification during postinstall, and `apps/expo/tests/dependency-compat.test.cjs` verifies active resolution.
+
+## Native App Identity
 
 - Expo slug / URI scheme: `guess-the-qubit-ar`
 - iOS bundle ID / Android package: `com.djleg.guessthequbitar`
 
-EAS build profiles are templates. The source EAS project ID and App Store Connect ID are removed. Link a separate EAS project and configure signing/store records before a cloud build or submission. Private environment values and credentials are never copied. The repository split creates no cloud build, EAS project, or store submission.
+EAS build profiles are templates. The source EAS project ID and App Store Connect ID are removed. Link a separate EAS project and configure signing/store records before a cloud build or submission. Private environment values and credentials are never copied.

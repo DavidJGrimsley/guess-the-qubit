@@ -1,5 +1,10 @@
 # Monorepo app exclusion - exclude Unreal project and assets from Expo EAS builds
 apps/unreal
+apps/unreal/**
+
+# Turborepo cache
+.turbo
+.turbo/**
 
 # Unreal Engine artifacts
 *.uproject
@@ -7,28 +12,44 @@ apps/unreal
 *.umap
 *.uplugin
 Binaries
+Binaries/**
 DerivedDataCache
+DerivedDataCache/**
 Intermediate
+Intermediate/**
 Saved
+Saved/**
 .vs
+.vs/**
 .idea
+.idea/**
 Builds
+Builds/**
 PackagedBuilds
+PackagedBuilds/**
 Releases
+Releases/**
 *.sln
 *.suo
 *.opensdf
 *.sdf
 *.VC.db
 *.VC.opendb
+**/DefaultGame.local.ini
 Config/DefaultGame.local.ini
+apps/unreal/Config/DefaultGame.local.ini
 
 # Standard ignore patterns
 .git
+.git/**
 node_modules
+node_modules/**
 .expo
+.expo/**
 dist
+dist/**
 web-build
+web-build/**
 ios
 android
 

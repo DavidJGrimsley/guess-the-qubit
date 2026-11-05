@@ -4,10 +4,12 @@
   "private": true,
   "description": "Guess the Qubit Unreal Engine orchestration, release matrix, and host verification",
   "scripts": {
-    "check": "node scripts/host-check.cjs",
+    "check:structural": "node scripts/structural-check.cjs",
+    "check:host": "node scripts/host-check.cjs",
+    "check": "node scripts/structural-check.cjs",
     "matrix": "node scripts/release-matrix.cjs",
-    "test": "node scripts/host-check.cjs",
-    "ci:verify": "node scripts/host-check.cjs",
+    "test": "node --test tests/scripts.test.cjs",
+    "ci:verify": "node scripts/structural-check.cjs && node scripts/release-matrix.cjs && node --test tests/scripts.test.cjs",
     "test:automation": "node scripts/run-automation.cjs"
   }
 }

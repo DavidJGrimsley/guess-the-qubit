@@ -15,6 +15,15 @@
       "dependsOn": ["^build"]
     },
     "check": {},
-    "matrix": {}
+    "check:structural": {},
+    "check:host": {
+      "cache": false
+    },
+    "matrix": {
+      "cache": false
+    },
+    "test:automation": {
+      "cache": false
+    }
   }
 }

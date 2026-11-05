@@ -1,0 +1,18 @@
+# Auto-detect text files and normalize
+* text=auto
+
+# Force LF for all patch files to prevent checksum mismatch across platforms
+patches/*.patch text eol=lf
+
+# Unreal binary assets - protect exact blob bytes
+*.uasset binary
+*.umap binary
+*.png binary
+*.ico binary
+*.ttf binary
+*.glb binary
+
+# Unreal descriptors & ini
+*.uproject text
+*.uplugin text
+*.ini text

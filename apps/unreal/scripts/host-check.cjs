@@ -1,66 +1,93 @@
-// Host verification for Unreal Engine 5.8 project
+// Host verification for Unreal Engine 5.8 development and packaging
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+const { verifyStructure } = require('./structural-check.cjs');
 
-const projectRoot = path.resolve(__dirname, '..');
-const uprojectPath = path.join(projectRoot, 'GuessTheQubit.uproject');
-
-console.log('--- Guess the Qubit Unreal Host & Project Verification ---');
-console.log(`Host Platform: ${os.platform()} (${os.arch()})`);
-console.log(`OS Release:    ${os.release()}`);
-
-// 1. Verify GuessTheQubit.uproject exists and parse JSON
-if (!fs.existsSync(uprojectPath)) {
-  console.error(`ERROR: Missing ${uprojectPath}`);
-  process.exit(1);
-}
-
-const uproject = JSON.parse(fs.readFileSync(uprojectPath, 'utf8'));
-console.log(`Engine Association: ${uproject.EngineAssociation}`);
-console.log(`Enabled Plugins:    ${uproject.Plugins.map((p) => p.Name).join(', ')}`);
-
-// Verify required plugins
-const requiredPlugins = ['QuantumApi', 'AllToolsets', 'AIModuleToolset', 'MCPClientToolset', 'ModelContextProtocol'];
-const enabledPluginNames = new Set(uproject.Plugins.filter((p) => p.Enabled).map((p) => p.Name));
-for (const req of requiredPlugins) {
-  if (!enabledPluginNames.has(req)) {
-    console.warn(`WARNING: Expected plugin "${req}" to be enabled in uproject`);
+function resolveEnginePaths() {
+  const envPath = process.env.UNREAL_ENGINE_PATH || process.env.UE_5_8_PATH;
+  if (envPath) {
+    const candidateCmd = path.join(envPath, 'Engine', 'Binaries', os.platform() === 'win32' ? 'Win64\\UnrealEditor-Cmd.exe' : 'UnrealEditor-Cmd');
+    const directCmd = envPath.endsWith('UnrealEditor-Cmd.exe') || envPath.endsWith('UnrealEditor-Cmd') ? envPath : candidateCmd;
+    if (fs.existsSync(directCmd)) {
+      return { root: envPath, editorCmd: directCmd };
+    }
+    // Explicit override path specified but not found on disk: do not fall back
+    return { root: envPath, editorCmd: null };
   }
-}
 
-// 2. Verify Config files
-const configFiles = ['DefaultEngine.ini', 'DefaultInput.ini', 'DefaultGame.ini'];
-for (const cfg of configFiles) {
-  const p = path.join(projectRoot, 'Config', cfg);
-  if (!fs.existsSync(p)) {
-    console.warn(`WARNING: Config/${cfg} missing`);
-  } else {
-    console.log(`Config found:       Config/${cfg}`);
+  const platform = os.platform();
+  if (platform === 'win32') {
+    const standardRoot = 'C:\\Program Files\\Epic Games\\UE_5.8';
+    const standardCmd = path.join(standardRoot, 'Engine', 'Binaries', 'Win64', 'UnrealEditor-Cmd.exe');
+    if (fs.existsSync(standardCmd)) {
+      return { root: standardRoot, editorCmd: standardCmd };
+    }
+  } else if (platform === 'darwin') {
+    const standardRoot = '/Users/Shared/Epic Games/UE_5.8';
+    const standardCmd = path.join(standardRoot, 'Engine', 'Binaries', 'Mac', 'UnrealEditor-Cmd');
+    if (fs.existsSync(standardCmd)) {
+      return { root: standardRoot, editorCmd: standardCmd };
+    }
+  } else if (platform === 'linux') {
+    const standardRoot = '/opt/EpicGames/UE_5.8';
+    const standardCmd = path.join(standardRoot, 'Engine', 'Binaries', 'Linux', 'UnrealEditor-Cmd');
+    if (fs.existsSync(standardCmd)) {
+      return { root: standardRoot, editorCmd: standardCmd };
+    }
   }
+
+  return { root: null, editorCmd: null };
 }
 
-// 3. Verify Content and Plugins
-const contentPath = path.join(projectRoot, 'Content');
-const pluginsPath = path.join(projectRoot, 'Plugins');
-console.log(`Content directory:  ${fs.existsSync(contentPath) ? 'present' : 'MISSING'}`);
-console.log(`Plugins directory:  ${fs.existsSync(pluginsPath) ? 'present' : 'MISSING'}`);
+function runHostCheck(options = {}) {
+  const projectRoot = options.projectRoot || path.resolve(__dirname, '..');
+  console.log('--- Guess the Qubit Unreal Host & Project Verification ---');
+  console.log(`Host Platform: ${os.platform()} (${os.arch()})`);
+  console.log(`OS Release:    ${os.release()}`);
 
-// 4. Check for local Unreal Engine installation
-let ueEditorPath = null;
-if (os.platform() === 'win32') {
-  const candidate = 'C:\\Program Files\\Epic Games\\UE_5.8\\Engine\\Binaries\\Win64\\UnrealEditor-Cmd.exe';
-  if (fs.existsSync(candidate)) {
-    ueEditorPath = candidate;
+  // 1. Structural check (must pass on any host)
+  const structResult = verifyStructure(projectRoot);
+  if (!structResult.valid) {
+    console.error('FAIL: Static project structure check failed:');
+    for (const err of structResult.errors) {
+      console.error(`  - ${err}`);
+    }
+    return { success: false, code: 1, reason: 'structural_failure' };
   }
+  console.log('Structural Check: PASSED (all descriptors, configs, plugins verified)');
+
+  // 2. Native Engine Check
+  const engine = resolveEnginePaths();
+  if (!engine.editorCmd) {
+    console.warn('\n[HOST_UNVERIFIED] Unreal Engine 5.8 was not detected on this machine.');
+    console.warn('Set UNREAL_ENGINE_PATH or UE_5_8_PATH if UE 5.8 is installed in a non-standard location.');
+    console.warn('Native Unreal compilation, cooking, and automation tests require an installed engine.');
+    console.log('[NOTICE] JS orchestration scripts verify project descriptors, plugins, and host readiness.');
+    console.log('[NOTICE] JS checks do not compile or validate native Unreal C++ or cook UE assets.');
+    console.log('--- Unreal Host Check: UNVERIFIED (Missing Native Engine) ---\n');
+    return { success: false, code: 1, reason: 'engine_missing' };
+  }
+
+  console.log(`Unreal Engine 5.8: FOUND at ${engine.editorCmd}`);
+  console.log('\n[NOTICE] JS orchestration scripts verify project descriptors, plugins, and host readiness.');
+  console.log('[NOTICE] JS checks do not compile or validate native Unreal C++ or cook UE assets.');
+  console.log('--- Unreal Host Verification Passed (Native Engine Present) ---\n');
+  return { success: true, code: 0, engine };
 }
 
-if (ueEditorPath) {
-  console.log(`Unreal Engine 5.8:  FOUND at ${ueEditorPath}`);
-} else {
-  console.log('Unreal Engine 5.8:  Not detected at standard host location on this machine.');
+if (require.main === module) {
+  const isStructuralOnly = process.argv.includes('--structural-only');
+  if (isStructuralOnly) {
+    const structResult = verifyStructure(path.resolve(__dirname, '..'));
+    if (!structResult.valid) {
+      process.exit(1);
+    }
+    process.exit(0);
+  }
+
+  const result = runHostCheck();
+  process.exit(result.code);
 }
 
-console.log('\n[NOTICE] JS orchestration scripts verify project descriptors, plugins, and host readiness.');
-console.log('[NOTICE] JS checks do not compile or validate native Unreal C++ or cook UE assets.');
-console.log('--- Unreal Host Verification Passed ---\n');
+module.exports = { runHostCheck, resolveEnginePaths };
