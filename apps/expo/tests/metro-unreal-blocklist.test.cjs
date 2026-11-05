@@ -8,14 +8,14 @@ const {
 
 const blocked = (pattern, file) => pattern.test(file);
 
-test('Windows checkout: blocks apps\\unreal (any separator or case) but not the Expo app', () => {
+test('Windows checkout: blocks apps\\unreal (either separator, either drive-letter case) but not the Expo app', () => {
   const pattern = createUnrealBlockPattern('C:\\src\\guess-the-qubit\\apps\\unreal');
   for (const file of [
     'C:\\src\\guess-the-qubit\\apps\\unreal',
     'C:\\src\\guess-the-qubit\\apps\\unreal\\Content\\Main_Level.umap',
     'C:\\src\\guess-the-qubit\\apps\\unreal\\Intermediate\\Build\\Win64\\x.cpp',
     'C:/src/guess-the-qubit/apps/unreal/Saved/Logs/a.log',
-    'c:\\SRC\\Guess-The-Qubit\\apps\\Unreal\\Binaries\\Win64\\GuessTheQubit.exe',
+    'c:\\src\\guess-the-qubit\\apps\\unreal\\Binaries\\Win64\\GuessTheQubit.exe',
   ]) {
     assert.equal(blocked(pattern, file), true, file);
   }
@@ -99,4 +99,29 @@ test('metro.config.js blocks the real apps/unreal directory and keeps the Expo p
   assert.equal(isBlocked(path.join(expoRoot, 'metro.config.js')), false);
   // The default Expo block list must still be present.
   assert.ok(patterns.length >= 2);
+});
+
+test('every blockList pattern shares the same RegExp flags (Expo CLI refuses to combine mixed flags)', () => {
+  const patterns = [].concat(require('../metro.config.js').resolver.blockList);
+  const flags = new Set(patterns.map((pattern) => pattern.flags));
+  assert.equal(flags.size, 1, `mixed flags: ${[...flags].map((flag) => `"${flag}"`).join(', ')}`);
+  // Regression: a Windows-only "i" flag made `expo export` fail with "Cannot combine blockList patterns".
+  assert.equal(createUnrealBlockPattern('C:\\src\\repo\\apps\\unreal').flags, '');
+  assert.equal(createUnrealBlockPattern('/src/repo/apps/unreal').flags, '');
+});
+
+test('Expo CLI composes the real blockList into one pattern that still blocks only apps/unreal', () => {
+  const {
+    composeMetroIgnorePatterns,
+  } = require('@expo/cli/build/src/utils/composeMetroIgnorePatterns');
+  const config = require('../metro.config.js');
+  const expoRoot = path.resolve(__dirname, '..');
+  const unrealRoot = getUnrealDirectory(expoRoot);
+
+  // This is the exact call that threw for mixed flags during `expo export`.
+  const combined = composeMetroIgnorePatterns(config.resolver.blockList);
+  assert.equal(combined.test(unrealRoot), true);
+  assert.equal(combined.test(path.join(unrealRoot, 'Intermediate', 'Build', 'x.cpp')), true);
+  assert.equal(combined.test(path.join(expoRoot, 'src', 'app', 'index.tsx')), false);
+  assert.equal(combined.test(path.join(expoRoot, 'metro.config.js')), false);
 });
