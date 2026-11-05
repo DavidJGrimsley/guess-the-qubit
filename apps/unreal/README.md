@@ -34,10 +34,21 @@ This repo is an early playable prototype. It currently includes:
 
 - `Config/` - Unreal project configuration (`DefaultEngine.ini`, `DefaultInput.ini`, `DefaultGame.ini`).
 - `Content/` - Game Blueprints, UI, materials, and maps (`Main_Level.umap`).
-- `Plugins/QuantumAPI/` - Project-local copy of the Quantum API Unreal plugin (`Source/`, `Config/`, `contract/`).
-- `scripts/` - Orchestration and verification scripts (`host-check.cjs`, `release-matrix.cjs`, `run-automation.cjs`, `build-unreal.cjs`).
+- `Plugins/QuantumAPI/` - Project-local copy of the Quantum API Unreal plugin (`Source/`, `Config/`, `contract/`). The directory is `QuantumAPI`; the plugin and descriptor are named `QuantumApi` (`QuantumApi.uplugin`). Capitalization matters on Linux and in CI.
+- `scripts/` - Orchestration and verification scripts: `structural-check.cjs` (static project checks), `host-check.cjs` (engine detection for this OS), `release-matrix.cjs` (release policy), `run-automation.cjs` (native automation runner).
+- `tests/` - Node tests for those scripts, including fixtures of real UE 5.8 automation output (`tests/fixtures/`).
 
 Generated Unreal folders such as `Binaries/`, `DerivedDataCache/`, `Intermediate/`, `Saved/`, and `Builds/` are intentionally git-ignored.
+
+## Project Configuration Notes
+
+- **Editor-only developer plugins**: `AllToolsets`, `AIModuleToolset`, `MCPClientToolset`, and `ModelContextProtocol` are enabled with `"TargetAllowList": ["Editor"]` in `GuessTheQubit.uproject`, matching `ModelingToolsEditorMode`, so they stay out of game targets. Packaged builds do not include them.
+- **GameFeatureData Asset Manager rule**: `Config/DefaultGame.ini` registers the `GameFeatureData` primary asset type under `[/Script/Engine.AssetManagerSettings]` with `bIsEditorOnly=True`. The editor-only plugin chain `AllToolsets` -> `GameFeaturesToolset` -> `GameFeatures` loads in the editor and the cook commandlet, and without this rule UE 5.8 logs `LogGameFeatures: Error` / `LoadErrors: Error`, which fails `RunUAT BuildCookRun` with `Error_UnknownCookFailure` (exit code 25). `bIsEditorOnly=True` keeps the entry out of the packaged game, where the GameFeatures module is not loaded. This project has no game feature plugins.
+- **ApiKey**: `Config/DefaultGame.ini` must keep `ApiKey=` empty. `scripts/structural-check.cjs` fails if a key is committed.
+
+## Building and Testing
+
+From the monorepo root: `pnpm run unreal:check` (static, any OS), `pnpm run unreal:test` (script tests, any OS), `pnpm run unreal:check:host` (detects UE 5.8, never compiles), and `pnpm run unreal:test:automation` (runs the `QuantumApi.Runtime.Transport` automation test in the editor). Native compile and package commands, and what has and has not been validated per OS, are in the root `README.md`.
 
 ## Educational Direction
 

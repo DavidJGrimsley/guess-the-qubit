@@ -1,0 +1,6 @@
+# Real UnrealEditor-Cmd 5.8 output (Win64, nullrhi) for a deliberately failing QuantumApi.Runtime.Transport assertion injected in a throwaway scratch clone (never committed). The editor process exited 255 and logged TEST COMPLETE. EXIT CODE: -1. Selected lines only; paths sanitized.
+[2026.11.05-19.29.14:090][302]LogAutomationCommandLine: Display: Found 1 automation tests based on 'QuantumApi.Runtime.Transport'
+[2026.11.05-19.29.14:177][305]LogAutomationController: Error: Test Completed. Result={Fail} Name={Transport} Path={QuantumApi.Runtime.Transport}
+[2026.11.05-19.29.14:178][305]LogAutomationController: Error: Expected 'Direct mode always uses the hosted Quantum API URL' to be "https://davidjgrimsley.com/public-facing/api/quantum/v2-DELIBERATE-FAILURE", but it was "https://davidjgrimsley.com/public-facing/api/quantum/v1". [F:\ReactNativeApps\xr-showcase-i2Workspace\temp\gtq-sonnet-scratch\baseline-558f891\apps\unreal\Plugins\QuantumAPI\Source\QuantumApi\Private\Tests\QuantumApiAutomationSpec.cpp(50)]
+[2026.11.05-19.29.14:195][306]LogAutomationCommandLine: Display: Setting GIsCriticalError due to test failures (will cause non-zero exit code).
+[2026.11.05-19.29.14:195][306]LogAutomationCommandLine: Display: **** TEST COMPLETE. EXIT CODE: -1 ****
