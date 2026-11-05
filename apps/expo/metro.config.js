@@ -9,8 +9,8 @@ config.resolver.assetExts = [
 const defaultBlockList = Array.isArray(config.resolver.blockList)
   ? config.resolver.blockList
   : config.resolver.blockList
-  ? [config.resolver.blockList]
-  : [];
+    ? [config.resolver.blockList]
+    : [];
 
 config.resolver.blockList = [
   ...defaultBlockList,
